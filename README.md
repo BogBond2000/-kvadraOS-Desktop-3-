@@ -76,6 +76,19 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --target accel_server accel_client_a accel_client_b -j 4
 ```
 
+## CI
+
+Добавлен GitHub Actions workflow: `.github/workflows/ci.yml`.
+
+CI выполняет на `ubuntu-24.04`:
+
+1. установку CMake, Ninja, Protobuf, gRPC и OpenSSL;
+2. конфигурацию проекта через CMake;
+3. сборку сервера, клиентов и тестов;
+4. запуск `ctest --output-on-failure`.
+
+Workflow запускается на `push`, `pull_request` и вручную через `workflow_dispatch`.
+
 ## Тесты
 
 Тесты написаны на GoogleTest и подключаются через CMake `FetchContent`.

@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  linux-build-and-test:
+    name: Linux gRPC build and tests
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            cmake \
+            ninja-build \
+            pkg-config \
+            protobuf-compiler \
+            protobuf-compiler-grpc \
+            libprotobuf-dev \
+            libgrpc++-dev \
+            libssl-dev \
+            openssl
+
+      - name: Configure CMake
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DBUILD_TESTING=ON
+
+      - name: Build
+        run: |
+          cmake --build build --target \
+            accel_server \
+            accel_client_a \
+            accel_client_b \
+            accel_unit_tests \
+            accel_model_tests \
+            accel_tls_tests
+
+      - name: Run tests
+        run: |
+          ctest --test-dir build --output-on-failure

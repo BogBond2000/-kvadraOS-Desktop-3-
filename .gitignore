@@ -9,3 +9,17 @@
 .cxx
 local.properties
 /.idea
+
+# CMake / generated artifacts
+/build-*/
+compile_commands.json
+
+# Runtime logs
+*.log
+accel_module.log
+
+# Generated TLS certificates and private keys
+/certs/
+*.key
+*.csr
+*.srl
