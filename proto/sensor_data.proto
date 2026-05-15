@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package accel;
+
+// One bidirectional stream is used by both application roles. The first
+// message in each stream must be ClientHello so the server can register the
+// endpoint as sender (Node A) or processor (Node B).
+service AccelerometerService {
+  rpc StreamAccelData(stream StreamMessage) returns (stream StreamMessage);
+}
+
+enum ClientRole {
+  CLIENT_ROLE_UNKNOWN = 0;
+  CLIENT_ROLE_SENDER = 1;
+  CLIENT_ROLE_PROCESSOR = 2;
+}
+
+message ClientHello {
+  uint32 version = 1;
+  ClientRole role = 2;
+}
+
+message StreamMessage {
+  uint32 version = 1;
+
+  oneof payload {
+    ClientHello hello = 2;
+    AccelPacket packet = 3;
+    AccelModule module = 4;
+  }
+}
+
+message AccelPacket {
+  uint32 version = 1;
+  int64 timestamp = 2;   // milliseconds since Unix epoch
+  float x = 3;
+  float y = 4;
+  float z = 5;
+}
+
+message AccelModule {
+  uint32 version = 1;
+  int64 timestamp = 2;
+  float module = 3;
+}
