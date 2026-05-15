@@ -14,7 +14,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Install all dependencies
+      - name: Install base dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -26,9 +26,34 @@ jobs:
             openssl \
             protobuf-compiler \
             libprotobuf-dev \
-            libprotoc-dev \
-            libgrpc++-dev \
-            protobuf-compiler-grpc
+            libprotoc-dev
+      
+      - name: Build and install gRPC
+        run: |
+          cd /tmp
+          git clone --depth 1 --branch v1.54.0 https://github.com/grpc/grpc.git
+          cd grpc
+          git submodule update --init --depth 1
+          mkdir -p cmake/build
+          cd cmake/build
+          cmake ../.. \
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_SHARED_LIBS=ON \
+            -DgRPC_INSTALL=ON \
+            -DgRPC_BUILD_TESTS=OFF \
+            -DgRPC_PROTOBUF_PROVIDER=package \
+            -DgRPC_SSL_PROVIDER=package
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+      
+      - name: Verify installations
+        run: |
+          protoc --version
+          pkg-config --modversion protobuf
+          ls /usr/lib/cmake/grpc/ || echo "grpc cmake dir"
+          ls /usr/lib/cmake/protobuf/ || echo "protobuf cmake dir"
       
       - name: Configure CMake
         run: |
