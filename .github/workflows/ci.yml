@@ -13,19 +13,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install Protobuf from source
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y autoconf automake libtool curl make g++ unzip
-          cd /tmp
-          wget https://github.com/protocolbuffers/protobuf/releases/download/v25.3/protobuf-25.3.tar.gz
-          tar -xzf protobuf-25.3.tar.gz
-          cd protobuf-25.3
-          ./configure --prefix=/usr/local
-          make -j$(nproc)
-          sudo make install
-          sudo ldconfig
-          cd ..
+      
       - name: Install system dependencies
         run: |
           sudo apt-get update
@@ -35,7 +23,6 @@ jobs:
             ninja-build \
             pkg-config \
             protobuf-compiler \
-            protobuf-compiler-grpc \
             libprotobuf-dev \
             libgrpc++-dev \
             libssl-dev \
@@ -45,7 +32,8 @@ jobs:
         run: |
           cmake -S . -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Debug \
-            -DBUILD_TESTING=ON
+            -DBUILD_TESTING=ON \
+            -DCMAKE_PREFIX_PATH="/usr/lib/x86_64-linux-gnu/cmake/protobuf"
 
       - name: Build
         run: |
