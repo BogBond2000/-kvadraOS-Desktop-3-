@@ -4,6 +4,7 @@ project(accelerometer_system LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+include(FindProtobuf)
 find_package(Protobuf REQUIRED)
 find_package(gRPC REQUIRED)
 
