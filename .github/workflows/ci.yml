@@ -19,8 +19,8 @@ jobs:
           sudo apt-get install -y autoconf automake libtool curl make g++ unzip
           cd /tmp
           wget https://github.com/protocolbuffers/protobuf/releases/download/v25.3/protobuf-25.3.tar.gz
-          tar -xzf protobuf-cpp-3.25.3.tar.gz
-          cd protobuf-3.25.3
+          tar -xzf protobuf-25.3.tar.gz
+          cd protobuf-25.3
           ./configure --prefix=/usr/local
           make -j$(nproc)
           sudo make install
