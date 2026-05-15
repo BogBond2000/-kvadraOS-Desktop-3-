@@ -13,10 +13,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install Protobuf
+      - name: Install Protobuf from source
         run: |
           sudo apt-get update
-          sudo apt-get install -y protobuf-compiler libprotobuf-dev
+          sudo apt-get install -y autoconf automake libtool curl make g++ unzip
+          cd /tmp
+          wget https://github.com/protocolbuffers/protobuf/releases/download/v25.3/protobuf-cpp-3.25.3.tar.gz
+          tar -xzf protobuf-cpp-3.25.3.tar.gz
+          cd protobuf-3.25.3
+          ./configure --prefix=/usr/local
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ..
       - name: Install system dependencies
         run: |
           sudo apt-get update
